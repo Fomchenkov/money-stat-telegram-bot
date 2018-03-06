@@ -2,6 +2,7 @@
 
 import time
 import sqlite3
+import datetime
 
 import telebot
 from telebot import types
@@ -47,6 +48,11 @@ def start_command_handler(message):
 	for command_arr in config.main_markup:
 		markup.row(*command_arr)
 	return bot.send_message(cid, config.main_text, reply_markup=markup)
+
+
+@bot.message_handler(commands=['help'])
+def help_command_handler(message):
+	return bot.send_message(message.chat.id, config.help_message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -149,7 +155,18 @@ def text_content_handler(message):
 		markup.row('⬅️ Отмена')
 		return bot.send_message(cid, text, reply_markup=markup)
 	elif message.text == '📈 Статистика':
-		text = 'В разработке'
+		month_number = int(str(datetime.datetime.now())[5:7])
+		month_income = 0
+		month_income_arr = util.get_month_income(uid, month_number)
+		for x in month_income_arr:
+			month_income += x.income
+		month_outcome = 0
+		month_outcome_arr = util.get_month_outcome(uid, month_number)
+		for x in month_outcome_arr:
+			month_outcome += x.outcome
+		statistic = month_income - month_outcome
+		text = 'Статистика за этот месяц\n\nДоход: {!s}p\nРасход: {!s}p\nПрибыль: {!s}p'.format(
+			month_income, month_outcome, statistic)
 		return bot.send_message(cid, text)
 	elif message.text == 'ℹ️ О боте':
 		return bot.send_message(cid, config.about_bot)

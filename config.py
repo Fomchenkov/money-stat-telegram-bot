@@ -12,3 +12,4 @@ about_developer = '''Бот разработан студией Kronver.
 
 Разработчик: @fomchenkov_v
 Официальный бот: @Kronver_bot'''
+help_message = 'Бот для учета финансов.'
