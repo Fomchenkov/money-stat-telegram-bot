@@ -68,7 +68,7 @@ def get_month_income(uid, month_number):
 	"""
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
-		sql = '''SELECT * FROM income WHERE uid=? AND month_number=?'''
+		sql = '''SELECT * FROM income WHERE uid=? AND month_number=? ORDER BY id'''
 		res = cursor.execute(sql, (uid, month_number)).fetchall()
 		connection.commit()
 	incomes = []
@@ -84,7 +84,7 @@ def get_month_outcome(uid, month_number):
 	"""
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
-		sql = '''SELECT * FROM outcome WHERE uid=? AND month_number=?'''
+		sql = '''SELECT * FROM outcome WHERE uid=? AND month_number=? ORDER BY id'''
 		res = cursor.execute(sql, (uid, month_number)).fetchall()
 		connection.commit()
 	outcomes = []
@@ -92,3 +92,22 @@ def get_month_outcome(uid, month_number):
 		print(x)
 		outcomes.append(Outcome(x[0], x[1], x[2], x[3], x[4], x[5]))
 	return outcomes
+
+
+def generate_correct_date(x):
+	"""
+	Generate correct date
+	:param x: income/outcome instance
+	:return: normal date as string
+	"""
+	_date = ''
+	if len(str(x.month_number)) == 1:
+		_date = '0' + str(x.month_number)
+	else:
+		_date = str(x.month_number)
+	_date += '.'
+	if len(str(x.month_day)) == 1:
+		_date += '0' + str(x.month_day)
+	else:
+		_date += str(x.month_day)
+	return _date

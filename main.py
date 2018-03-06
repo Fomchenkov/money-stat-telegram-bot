@@ -73,7 +73,7 @@ def text_content_handler(message):
 		return bot.send_message(cid, config.main_text, reply_markup=markup)
 	elif message.text == '⏩ Пропустить этот шаг':
 		if uid in READY_TO_INCOME:
-			util.add_income(uid, READY_TO_INCOME[uid]['amount'], None)
+			util.add_income(uid, READY_TO_INCOME[uid]['amount'], '')
 			del READY_TO_INCOME[uid]
 			text = '✅ Доход добавлен!'
 			markup = types.ReplyKeyboardMarkup(
@@ -82,7 +82,7 @@ def text_content_handler(message):
 				markup.row(*command_arr)
 			return bot.send_message(cid, text, reply_markup=markup)
 		elif uid in READY_TO_OUTCOME:
-			util.add_outcome(uid, READY_TO_OUTCOME[uid]['amount'], None)
+			util.add_outcome(uid, READY_TO_OUTCOME[uid]['amount'], '')
 			del READY_TO_OUTCOME[uid]
 			text = '✅ Расход добавлен!'
 			markup = types.ReplyKeyboardMarkup(
@@ -185,13 +185,30 @@ def text_content_handler(message):
 def callback_inline(call):
 	uid = call.from_user.id
 	cid = call.message.chat.id
+	month_number = int(str(datetime.datetime.now())[5:7])
 
 	bot.send_chat_action(cid, 'typing')
 
 	if call.data == 'current_incomes':
-		return bot.send_message(cid, 'В разработке')
+		incomes = util.get_month_income(uid, month_number)
+		if len(incomes) == 0:
+			text = 'Нет доходов.'
+			return bot.send_message(cid, text)
+		for x in incomes:
+			_date = util.generate_correct_date(x)
+			text = '*Доход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
+				x.income, x.income_description, _date)
+			bot.send_message(cid, text, parse_mode='markdown')
 	elif call.data == 'current_outcomes':
-		return bot.send_message(cid, 'В разработке')
+		outcomes = util.get_month_outcome(uid, month_number)
+		if len(outcomes) == 0:
+			text = 'Нет расходов.'
+			return bot.send_message(cid, text)
+		for x in outcomes:
+			_date = util.generate_correct_date(x)
+			text = '*Расход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
+				x.outcome, x.outcome_description, _date)
+			bot.send_message(cid, text, parse_mode='markdown')
 	elif call.data == 'lastmonth':
 		month_number = int(str(datetime.datetime.now())[5:7]) - 1
 		month_income = 0
@@ -213,9 +230,27 @@ def callback_inline(call):
 		keyboard.add(income_btn, outcome_btn)
 		return bot.send_message(cid, text, reply_markup=keyboard)
 	elif call.data == 'last_incomes':
-		return bot.send_message(cid, 'В разработке')
+		month_number -= 1
+		incomes = util.get_month_income(uid, month_number)
+		if len(incomes) == 0:
+			text = 'Нет доходов.'
+			return bot.send_message(cid, text)
+		for x in incomes:
+			_date = util.generate_correct_date(x)
+			text = '*Доход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
+				x.income, x.income_description, _date)
+			bot.send_message(cid, text, parse_mode='markdown')
 	elif call.data == 'last_outcomes':
-		return bot.send_message(cid, 'В разработке')
+		month_number -= 1
+		outcomes = util.get_month_outcome(uid, month_number)
+		if len(outcomes) == 0:
+			text = 'Нет расходов.'
+			return bot.send_message(cid, text)
+		for x in outcomes:
+			_date = util.generate_correct_date(x)
+			text = '*Расход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
+				x.outcome, x.outcome_description, _date)
+			bot.send_message(cid, text, parse_mode='markdown')
 
 
 def main():
