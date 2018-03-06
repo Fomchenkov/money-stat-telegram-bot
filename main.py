@@ -309,10 +309,14 @@ def callback_inline(call):
 
 
 def main():
-	# TODO: while loop
 	# TODO: autopep8 lint
 	# TODO: write help message
-	bot.polling(none_stop=True)
+	while True:
+		try:
+			bot.polling(none_stop=True)
+		except Exception as e:
+			print(e)
+			time.sleep(30)
 
 
 if __name__ == '__main__':
