@@ -111,3 +111,25 @@ def generate_correct_date(x):
 	else:
 		_date += str(x.month_day)
 	return _date
+
+
+def delete_income(income_id):
+	"""
+	Delete income
+	"""
+	with sqlite3.connect(config.db_name) as connection:
+		cursor = connection.cursor()
+		sql = '''DELETE FROM income WHERE id=?'''
+		cursor.execute(sql, (income_id,))
+		connection.commit()
+
+
+def delete_outcome(outcome_id):
+	"""
+	Delete outcome
+	"""
+	with sqlite3.connect(config.db_name) as connection:
+		cursor = connection.cursor()
+		sql = '''DELETE FROM outcome WHERE id=?'''
+		cursor.execute(sql, (outcome_id,))
+		connection.commit()

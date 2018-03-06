@@ -16,4 +16,3 @@
 ## TODO
 
 1. Add the "year" field to the Income and Outcome model.
-2. Add the ability to remove Incomes and Outcomes.

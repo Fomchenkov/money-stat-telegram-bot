@@ -198,7 +198,11 @@ def callback_inline(call):
 			_date = util.generate_correct_date(x)
 			text = '*Доход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
 				x.income, x.income_description, _date)
-			bot.send_message(cid, text, parse_mode='markdown')
+			keyboard = types.InlineKeyboardMarkup()
+			income_btn = types.InlineKeyboardButton(
+				text='❌ Удалить', callback_data='deleteincome_{!s}'.format(x.id))
+			keyboard.add(income_btn)
+			bot.send_message(cid, text, parse_mode='markdown', reply_markup=keyboard)
 	elif call.data == 'current_outcomes':
 		outcomes = util.get_month_outcome(uid, month_number)
 		if len(outcomes) == 0:
@@ -208,7 +212,11 @@ def callback_inline(call):
 			_date = util.generate_correct_date(x)
 			text = '*Расход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
 				x.outcome, x.outcome_description, _date)
-			bot.send_message(cid, text, parse_mode='markdown')
+			keyboard = types.InlineKeyboardMarkup()
+			income_btn = types.InlineKeyboardButton(
+				text='❌ Удалить', callback_data='deleteoutcome_{!s}'.format(x.id))
+			keyboard.add(income_btn)
+			bot.send_message(cid, text, parse_mode='markdown', reply_markup=keyboard)
 	elif call.data == 'lastmonth':
 		month_number = int(str(datetime.datetime.now())[5:7]) - 1
 		month_income = 0
@@ -239,7 +247,11 @@ def callback_inline(call):
 			_date = util.generate_correct_date(x)
 			text = '*Доход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
 				x.income, x.income_description, _date)
-			bot.send_message(cid, text, parse_mode='markdown')
+			keyboard = types.InlineKeyboardMarkup()
+			income_btn = types.InlineKeyboardButton(
+				text='❌ Удалить', callback_data='deleteincome_{!s}'.format(x.id))
+			keyboard.add(income_btn)
+			bot.send_message(cid, text, parse_mode='markdown', reply_markup=keyboard)
 	elif call.data == 'last_outcomes':
 		month_number -= 1
 		outcomes = util.get_month_outcome(uid, month_number)
@@ -250,7 +262,29 @@ def callback_inline(call):
 			_date = util.generate_correct_date(x)
 			text = '*Расход*\n\nСумма: {}\nОписание: {!s}\nДата: {!s}'.format(
 				x.outcome, x.outcome_description, _date)
-			bot.send_message(cid, text, parse_mode='markdown')
+			keyboard = types.InlineKeyboardMarkup()
+			income_btn = types.InlineKeyboardButton(
+				text='❌ Удалить', callback_data='deleteoutcome_{!s}'.format(x.id))
+			keyboard.add(income_btn)
+			bot.send_message(cid, text, parse_mode='markdown', reply_markup=keyboard)
+	elif call.data.startswith('deleteincome'):
+		income_id = int(call.data.split('_')[1])
+		print(income_id)
+		util.delete_income(income_id)
+		bot.delete_message(cid, call.message.message_id)
+		try:
+			bot.answer_callback_query(callback_query_id=call.id, text='Готово')
+		except Exception as e:
+			print(e)
+	elif call.data.startswith('deleteoutcome'):
+		outcome_id = int(call.data.split('_')[1])
+		print(outcome_id)
+		util.delete_outcome(outcome_id)
+		bot.delete_message(cid, call.message.message_id)
+		try:
+			bot.answer_callback_query(callback_query_id=call.id, text='Готово')
+		except Exception as e:
+			print(e)
 
 
 def main():
