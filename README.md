@@ -1,7 +1,7 @@
 # Money Stat Telegram Bot
 
 
-# Install
+## Install
 
 1. Past your TELEGRAM BOT TOKEN to `config.py`
 
@@ -9,6 +9,6 @@
 
 `$ sudo pip3 install -r requirements.txt`
 
-# Run
+## Run
 
 `$ python3 main.py`
