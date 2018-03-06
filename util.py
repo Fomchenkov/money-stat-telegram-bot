@@ -10,11 +10,12 @@ class Income:
 	"""
 
 	def __init__(self, id, uid, month_day, 
-		month_number, income, income_description):
+		month_number, year, income, income_description):
 		self.id = id
 		self.uid = uid
 		self.month_day = month_day
 		self.month_number = month_number
+		self.year = year
 		self.income = income
 		self.income_description = income_description
 
@@ -25,11 +26,12 @@ class Outcome:
 	"""
 
 	def __init__(self, id, uid, month_day, 
-		month_number, outcome, outcome_description):
+		month_number, year, outcome, outcome_description):
 		self.id = id
 		self.uid = uid
 		self.month_day = month_day
 		self.month_number = month_number
+		self.year = year
 		self.outcome = outcome
 		self.outcome_description= outcome_description
 
@@ -40,11 +42,12 @@ def add_income(uid, amount, description):
 	"""
 	month_day = int(str(datetime.datetime.now())[8:10])
 	month_number = int(str(datetime.datetime.now())[5:7])
+	year = int(str(datetime.datetime.now())[0:4])
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
 		sql = '''INSERT INTO income (uid, month_day, month_number, 
-		income, income_description) VALUES (?, ?, ?, ?, ?)'''
-		cursor.execute(sql, (uid, month_day, month_number, amount, description))
+		year, income, income_description) VALUES (?, ?, ?, ?, ?, ?)'''
+		cursor.execute(sql, (uid, month_day, month_number, year, amount, description))
 		connection.commit()
 
 
@@ -54,11 +57,12 @@ def add_outcome(uid, amount, description):
 	"""
 	month_day = int(str(datetime.datetime.now())[8:10])
 	month_number = int(str(datetime.datetime.now())[5:7])
+	year = int(str(datetime.datetime.now())[0:4])
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
 		sql = '''INSERT INTO outcome (uid, month_day, month_number, 
-		outcome, outcome_description) VALUES (?, ?, ?, ?, ?)'''
-		cursor.execute(sql, (uid, month_day, month_number, amount, description))
+		year, outcome, outcome_description) VALUES (?, ?, ?, ?, ?, ?)'''
+		cursor.execute(sql, (uid, month_day, month_number, year, amount, description))
 		connection.commit()
 
 
@@ -66,15 +70,16 @@ def get_month_income(uid, month_number):
 	"""
 	Get month income value
 	"""
+	year = int(str(datetime.datetime.now())[0:4])
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
-		sql = '''SELECT * FROM income WHERE uid=? AND month_number=? ORDER BY id'''
-		res = cursor.execute(sql, (uid, month_number)).fetchall()
+		sql = '''SELECT * FROM income WHERE uid=? AND month_number=? AND year=? ORDER BY id'''
+		res = cursor.execute(sql, (uid, month_number, year)).fetchall()
 		connection.commit()
 	incomes = []
 	for x in res:
 		print(x)
-		incomes.append(Income(x[0], x[1], x[2], x[3], x[4], x[5]))
+		incomes.append(Income(x[0], x[1], x[2], x[3], x[4], x[5], x[6]))
 	return incomes
 
 
@@ -82,15 +87,16 @@ def get_month_outcome(uid, month_number):
 	"""
 	Get month outcome value
 	"""
+	year = int(str(datetime.datetime.now())[0:4])
 	with sqlite3.connect(config.db_name) as connection:
 		cursor = connection.cursor()
-		sql = '''SELECT * FROM outcome WHERE uid=? AND month_number=? ORDER BY id'''
-		res = cursor.execute(sql, (uid, month_number)).fetchall()
+		sql = '''SELECT * FROM outcome WHERE uid=? AND month_number=? AND year=? ORDER BY id'''
+		res = cursor.execute(sql, (uid, month_number, year)).fetchall()
 		connection.commit()
 	outcomes = []
 	for x in res:
 		print(x)
-		outcomes.append(Outcome(x[0], x[1], x[2], x[3], x[4], x[5]))
+		outcomes.append(Outcome(x[0], x[1], x[2], x[3], x[4], x[5], x[6]))
 	return outcomes
 
 
@@ -100,11 +106,11 @@ def generate_correct_date(x):
 	:param x: income/outcome instance
 	:return: normal date as string
 	"""
-	_date = ''
+	_date = str(x.year) + '.'
 	if len(str(x.month_number)) == 1:
-		_date = '0' + str(x.month_number)
+		_date += '0' + str(x.month_number)
 	else:
-		_date = str(x.month_number)
+		_date += str(x.month_number)
 	_date += '.'
 	if len(str(x.month_day)) == 1:
 		_date += '0' + str(x.month_day)

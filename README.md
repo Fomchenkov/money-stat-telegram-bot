@@ -15,4 +15,4 @@
 
 ## TODO
 
-1. Add the "year" field to the Income and Outcome model.
+1. Delete old month data by command `/clear`

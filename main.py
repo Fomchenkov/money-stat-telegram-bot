@@ -24,6 +24,7 @@ with sqlite3.connect(config.db_name) as connection:
 		uid INTEGER NOT NULL,
 		month_day INTEGER NOT NULL,
 		month_number INTEGER NOT NULL,
+		year INTEGER NOT NULL,
 		income INTEGER NOT NULL,
 		income_description TEXT)'''
 	cursor.execute(sql)
@@ -33,6 +34,7 @@ with sqlite3.connect(config.db_name) as connection:
 		uid INTEGER NOT NULL,
 		month_day INTEGER NOT NULL,
 		month_number INTEGER NOT NULL,
+		year INTEGER NOT NULL,
 		outcome INTEGER NOT NULL,
 		outcome_description TEXT)'''
 	cursor.execute(sql)
