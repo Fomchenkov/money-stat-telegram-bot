@@ -1,5 +1,6 @@
 BOT_TOKEN = ''
 db_name = 'db.db'
+admins = [217166737]  # Bot Admins IDs
 
 main_text = 'Главное меню'
 main_markup = [

@@ -139,3 +139,19 @@ def delete_outcome(outcome_id):
 		sql = '''DELETE FROM outcome WHERE id=?'''
 		cursor.execute(sql, (outcome_id,))
 		connection.commit()
+
+
+def delete_old_month_data():
+	"""
+	Delete old month data
+	"""
+	last_month_number = int(str(datetime.datetime.now())[5:7]) - 1
+	if last_month_number == 0:
+		last_month_number = 12
+	with sqlite3.connect(config.db_name) as connection:
+		cursor = connection.cursor()
+		sql = '''DELETE FROM income WHERE month_number<?'''
+		cursor.execute(sql, (last_month_number,))
+		sql = '''DELETE FROM outcome WHERE month_number<?'''
+		cursor.execute(sql, (last_month_number,))
+		connection.commit()

@@ -57,6 +57,21 @@ def help_command_handler(message):
 	return bot.send_message(message.chat.id, config.help_message)
 
 
+# Clear old month data
+@bot.message_handler(commands=['clear'])
+def clear_command_handler(message):
+	cid = message.chat.id
+	uid = message.from_user.id
+
+	if uid in config.admins:
+		util.delete_old_month_data()
+		text = 'Устаревшие данные успешно очищены.'
+		return bot.send_message(cid, text)
+	else:
+		text = 'Доступ запрещен.'
+		return bot.send_message(cid, text)
+
+
 @bot.message_handler(content_types=['text'])
 def text_content_handler(message):
 	cid = message.chat.id
@@ -167,7 +182,7 @@ def text_content_handler(message):
 		for x in month_outcome_arr:
 			month_outcome += x.outcome
 		statistic = month_income - month_outcome
-		text = 'Статистика за {!s}\n\nДоход: {!s}p\nРасход: {!s}p\nПрибыль: {!s}p'.format(
+		text = 'Статистика за {!s}\n\n➕ Доход: {!s}p\n➖ Расход: {!s}p\n💵 Прибыль: {!s}p'.format(
 			config.months_values[month_number], month_income, month_outcome, statistic)
 		keyboard = types.InlineKeyboardMarkup()
 		income_btn = types.InlineKeyboardButton(
@@ -230,7 +245,7 @@ def callback_inline(call):
 		for x in month_outcome_arr:
 			month_outcome += x.outcome
 		statistic = month_income - month_outcome
-		text = 'Статистика за {!s}\n\nДоход: {!s}p\nРасход: {!s}p\nПрибыль: {!s}p'.format(
+		text = 'Статистика за {!s}\n\n➕ Доход: {!s}p\n➖ Расход: {!s}p\n💵 Прибыль: {!s}p'.format(
 			config.months_values[month_number], month_income, month_outcome, statistic)
 		keyboard = types.InlineKeyboardMarkup()
 		income_btn = types.InlineKeyboardButton(
@@ -241,6 +256,8 @@ def callback_inline(call):
 		return bot.send_message(cid, text, reply_markup=keyboard)
 	elif call.data == 'last_incomes':
 		month_number -= 1
+		if month_number == 0:
+			month_number = 12
 		incomes = util.get_month_income(uid, month_number)
 		if len(incomes) == 0:
 			text = 'Нет доходов.'
@@ -256,6 +273,8 @@ def callback_inline(call):
 			bot.send_message(cid, text, parse_mode='markdown', reply_markup=keyboard)
 	elif call.data == 'last_outcomes':
 		month_number -= 1
+		if month_number == 0:
+			month_number = 12
 		outcomes = util.get_month_outcome(uid, month_number)
 		if len(outcomes) == 0:
 			text = 'Нет расходов.'
@@ -292,6 +311,7 @@ def callback_inline(call):
 def main():
 	# TODO: while loop
 	# TODO: autopep8 lint
+	# TODO: write help message
 	bot.polling(none_stop=True)
 
 

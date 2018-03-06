@@ -12,7 +12,3 @@
 ## Run
 
 `$ python3 main.py`
-
-## TODO
-
-1. Delete old month data by command `/clear`
